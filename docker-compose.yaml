@@ -1,0 +1,93 @@
+version: '1'
+services:
+  nginx:
+    container_name: v-nginx
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./web:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    command: ["nginx", "-g", "daemon off;"]
+  mysql:
+    container_name: v-mysql
+    image: mysql/mysql-server:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: kob
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+    expose:
+      - 3306
+    ports:
+        - "3306:3306"
+    volumes:
+      - ./kob.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+#
+#  spring-boot-app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "3000:3000"
+#      - "3001:3001"
+#      - "3002:3002"
+  backend:
+    container_name: v-backend
+    image: openjdk:8
+    build: ./backendcloud/backend
+    restart: always
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - ./backendcloud/backend:/backend
+      - ./backend-0.0.1-SNAPSHOT.jar:/backend-0.0.1-SNAPSHOT.jar
+    depends_on:
+      - mysql
+      - nginx
+    command:
+      - "java"
+      - "-jar"
+      - "backend-0.0.1-SNAPSHOT.jar"
+  matchingsystem:
+    container_name: v-matchingsystem
+    image: openjdk:8
+    build: ./backendcloud/matchingsystem
+    restart: always
+    expose:
+      - 3001
+    ports:
+      - 3001:3001
+    volumes:
+      - ./backendcloud/matchingsystem:/matchingsystem
+      - ./matchingsystem-0.0.1-SNAPSHOT.jar:/matchingsystem-0.0.1-SNAPSHOT.jar
+    depends_on:
+      - mysql
+      - nginx
+    command:
+        - "java"
+        - "-jar"
+        - "matchingsystem-0.0.1-SNAPSHOT.jar"
+  botrunningsystem:
+    container_name: v-botrunningsystem
+    image: openjdk:8
+    build: ./backendcloud/botrunningsystem
+    restart: always
+    expose:
+      - 3002
+    ports:
+      - 3002:3002
+    volumes:
+      - ./backendcloud/botrunningsystem:/botrunningsystem
+      - ./botrunningsystem-0.0.1-SNAPSHOT.jar:/botrunningsystem-0.0.1-SNAPSHOT.jar
+    depends_on:
+      - mysql
+      - nginx
+    command:
+      - "java"
+      - "-jar"
+      - "botrunningsystem-0.0.1-SNAPSHOT.jar"
