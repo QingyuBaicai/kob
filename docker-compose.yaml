@@ -1,7 +1,7 @@
 version: '1'
 services:
   nginx:
-    container_name: nginx
+    container_name: v-nginx
     image: nginx:latest
     restart: always
     ports:
@@ -10,10 +10,8 @@ services:
       - ./web:/usr/share/nginx/html
       - ./nginx/conf.d:/etc/nginx/conf.d
     command: ["nginx", "-g", "daemon off;"]
-    networks:
-      - app-tier
   mysql:
-    container_name: mysql
+    container_name: v-mysql
     image: mysql/mysql-server:latest
     environment:
       MYSQL_ROOT_PASSWORD: 123456
@@ -27,8 +25,6 @@ services:
     volumes:
       - ./kob.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
-    networks:
-      - app-tier
 #
 #  spring-boot-app:
 #    build:
@@ -39,20 +35,24 @@ services:
 #      - "3001:3001"
 #      - "3002:3002"
   backend:
-    container_name: backend
-    build:
-        context: ./backendcloud/backend
-        dockerfile: Dockerfile
+    container_name: v-backend
+    image: openjdk:8
+    build: ./backendcloud/backend
+    restart: always
     expose:
       - 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - ./backendcloud/backend:/backend
+      - ./backend-0.0.1-SNAPSHOT.jar:/backend-0.0.1-SNAPSHOT.jar
     depends_on:
       - mysql
       - nginx
-    networks:
-      - app-tier
-networks:
-  app-tier:
-    driver: bridge
+    command:
+      - "java"
+      - "-jar"
+      - "backend-0.0.1-SNAPSHOT.jar"
   matchingsystem:
     container_name: v-matchingsystem
     image: openjdk:8
@@ -60,8 +60,8 @@ networks:
     restart: always
     expose:
       - 3001
-#    ports:
-#      - 3001:3001
+    ports:
+      - 3001:3001
     volumes:
       - ./backendcloud/matchingsystem:/matchingsystem
       - ./matchingsystem-0.0.1-SNAPSHOT.jar:/matchingsystem-0.0.1-SNAPSHOT.jar
@@ -79,8 +79,8 @@ networks:
     restart: always
     expose:
       - 3002
-#    ports:
-#      - 3002:3002
+    ports:
+      - 3002:3002
     volumes:
       - ./backendcloud/botrunningsystem:/botrunningsystem
       - ./botrunningsystem-0.0.1-SNAPSHOT.jar:/botrunningsystem-0.0.1-SNAPSHOT.jar
