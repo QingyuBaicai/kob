@@ -53,41 +53,41 @@ services:
 networks:
   app-tier:
     driver: bridge
-#  matchingsystem:
-#    container_name: v-matchingsystem
-#    image: openjdk:8
-#    build: ./backendcloud/matchingsystem
-#    restart: always
-#    expose:
-#      - 3001
-##    ports:
-##      - 3001:3001
-#    volumes:
-#      - ./backendcloud/matchingsystem:/matchingsystem
-#      - ./matchingsystem-0.0.1-SNAPSHOT.jar:/matchingsystem-0.0.1-SNAPSHOT.jar
-#    depends_on:
-#      - mysql
-#      - nginx
-#    command:
-#        - "java"
-#        - "-jar"
-#        - "matchingsystem-0.0.1-SNAPSHOT.jar"
-#  botrunningsystem:
-#    container_name: v-botrunningsystem
-#    image: openjdk:8
-#    build: ./backendcloud/botrunningsystem
-#    restart: always
-#    expose:
-#      - 3002
-##    ports:
-##      - 3002:3002
-#    volumes:
-#      - ./backendcloud/botrunningsystem:/botrunningsystem
-#      - ./botrunningsystem-0.0.1-SNAPSHOT.jar:/botrunningsystem-0.0.1-SNAPSHOT.jar
-#    depends_on:
-#      - mysql
-#      - nginx
-#    command:
-#      - "java"
-#      - "-jar"
-#      - "botrunningsystem-0.0.1-SNAPSHOT.jar"
+  matchingsystem:
+    container_name: v-matchingsystem
+    image: openjdk:8
+    build: ./backendcloud/matchingsystem
+    restart: always
+    expose:
+      - 3001
+#    ports:
+#      - 3001:3001
+    volumes:
+      - ./backendcloud/matchingsystem:/matchingsystem
+      - ./matchingsystem-0.0.1-SNAPSHOT.jar:/matchingsystem-0.0.1-SNAPSHOT.jar
+    depends_on:
+      - mysql
+      - nginx
+    command:
+        - "java"
+        - "-jar"
+        - "matchingsystem-0.0.1-SNAPSHOT.jar"
+  botrunningsystem:
+    container_name: v-botrunningsystem
+    image: openjdk:8
+    build: ./backendcloud/botrunningsystem
+    restart: always
+    expose:
+      - 3002
+#    ports:
+#      - 3002:3002
+    volumes:
+      - ./backendcloud/botrunningsystem:/botrunningsystem
+      - ./botrunningsystem-0.0.1-SNAPSHOT.jar:/botrunningsystem-0.0.1-SNAPSHOT.jar
+    depends_on:
+      - mysql
+      - nginx
+    command:
+      - "java"
+      - "-jar"
+      - "botrunningsystem-0.0.1-SNAPSHOT.jar"
